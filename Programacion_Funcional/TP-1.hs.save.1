@@ -1,0 +1,23 @@
+
+data BTree a = Nil  | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
+
+
+
+-- crear desde un [a]
+create :: Int -> a -> BTree a -> BTree a
+create x a Nil = Leaf x [a]
+create () = 
+       | elem  
+
+-- buscar el maximo 
+-- buscar el minimo
+-- imprimir inoorder, preorder y postorder
+-- devolver un array de [a].
+-- mostrar la cantidad de item en el arbol.
+-- mostrar la profundida.
+
+
+--Mostrar valor (Lo agregue yo)
+mostrar :: BTree a  -> [a]
+mostrar  (Leaf _ x) =  x
+
