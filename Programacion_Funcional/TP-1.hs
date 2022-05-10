@@ -76,6 +76,13 @@ printInorden :: [BTree a] -> [[a]]
 printInorden [] = []
 printInorden (x:xs) =   printInordenAux x ++  printInorden xs
 
+printPostOrdenAux :: BTree a -> [[a]]
+printPostOrdenAux (Leaf _ a) = [a]
+printPostOrdenAux (Node _ list listBT) =  printPostorden listBT ++ [list] 
+
+printPostorden :: [BTree a] -> [[a]]
+printPostorden [] = []
+printPostorden (x:xs) =  printPostOrdenAux x ++ printPostorden xs
 
 -- devolver un array de [a].
 returnArrayAuxiliar :: BTree a -> [a]
