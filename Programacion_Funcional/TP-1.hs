@@ -1,4 +1,6 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use foldr" #-}
 nodo = Node 2 [1] [Nil]
 nodoLleno = Node 2 [3] [nodo]
 nodos123 = Node 2 [2] [Leaf 2 [1], Leaf 2 [3]]
@@ -65,6 +67,15 @@ printPreordenAuxiliar (Node _ list listBT) = list : printPreorden listBT
 printPreorden :: [BTree a] -> [[a]]
 printPreorden [] = []
 printPreorden (x:xs) = printPreordenAuxiliar x ++ printPreorden xs
+
+printInordenAux :: BTree a -> [[a]]
+printInordenAux (Leaf _ a)= [a] 
+printInordenAux (Node _ list listBT) =  printInordenAux (head listBT)  ++ list : printInorden (tail listBT) 
+
+printInorden :: [BTree a] -> [[a]]
+printInorden [] = []
+printInorden (x:xs) =   printInordenAux x ++  printInorden xs
+
 
 -- devolver un array de [a].
 returnArrayAuxiliar :: BTree a -> [a]
