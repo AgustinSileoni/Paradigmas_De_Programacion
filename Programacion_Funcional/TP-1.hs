@@ -1,6 +1,4 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use foldr" #-}
+
 nodo = Node 2 [1] [Nil]
 nodoLleno = Node 2 [3] [nodo]
 nodos123 = Node 2 [2] [Leaf 2 [1], Leaf 2 [3]]
@@ -14,39 +12,12 @@ listaGrande = returnArray [arbolGrande]
 data BTree a = Nil  | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
 
 
-datos :: BTree a -> [BTree a]
-datos (Node  _ _ b) = b 
-
-datosLeaf :: BTree a -> [a]
-datosLeaf (Leaf a list) = list
-datosLeaf (Node _ list _) = list
-
-cantidad :: BTree a -> Int
-cantidad (Node n _ _) = n
-
-editar :: a -> BTree a-> BTree a
-editar x (Node n d b) = Node n d (b++[Leaf 1 [x]])
-
--- agregar :: a -> BTree a-> [BTree a]
--- agregar x (Node n _ b) =  if length (b) < n 
---                             then (b) ++ [Leaf 1 [x]]
---
---                             else (datos(head(b))) ++ [Leaf 1 [x]]
-
-add :: a -> BTree a -> BTree a
-add a (Node x [] _) = Node x [a] [] 
-add a n = if length ( datos n) < cantidad n
-                     then editar a n 
-                     else Nil
-
-nodoVacio = Node 2 [] []
-
-
 -- crear desde un [a]
-create ::(Ord a,Eq a)=> [a] -> BTree a 
+create ::(Ord a,Eq a)=> [a] -> BTree a
+create [] = Nil
 create (x:xs) = if null xs 
-                  then insert Nil x
-                  else insert  (create xs) x
+                then insert Nil x
+                else insert  (create xs) x
 
 -- buscar el maximo 
 buscarMax :: (Ord a, Eq a) => BTree a -> a
@@ -59,16 +30,17 @@ buscarMin (Leaf _ list) = head list
 buscarMin (Node _ _ list) = buscarMin(head list)
 
 -- imprimir inoorder, preorder y postorder
-
-printPreordenAuxiliar :: BTree a -> [[a]]
-printPreordenAuxiliar (Leaf _ a) = [a]
-printPreordenAuxiliar (Node _ list listBT) = list : printPreorden listBT
+printPreordenAux :: BTree a -> [[a]]
+printPreordenAux Nil = []
+printPreordenAux (Leaf _ a) = [a]
+printPreordenAux (Node _ list listBT) = list : printPreorden listBT
 
 printPreorden :: [BTree a] -> [[a]]
 printPreorden [] = []
-printPreorden (x:xs) = printPreordenAuxiliar x ++ printPreorden xs
+printPreorden (x:xs) = printPreordenAux x ++ printPreorden xs
 
 printInordenAux :: BTree a -> [[a]]
+printInordenAux Nil = []
 printInordenAux (Leaf _ a)= [a] 
 printInordenAux (Node _ list listBT) =  printInordenAux (head listBT)  ++ list : printInorden (tail listBT) 
 
@@ -77,6 +49,7 @@ printInorden [] = []
 printInorden (x:xs) =   printInordenAux x ++  printInorden xs
 
 printPostOrdenAux :: BTree a -> [[a]]
+printPostOrdenAux Nil = []
 printPostOrdenAux (Leaf _ a) = [a]
 printPostOrdenAux (Node _ list listBT) =  printPostorden listBT ++ [list] 
 
@@ -84,8 +57,10 @@ printPostorden :: [BTree a] -> [[a]]
 printPostorden [] = []
 printPostorden (x:xs) =  printPostOrdenAux x ++ printPostorden xs
 
+
 -- devolver un array de [a].
 returnArrayAuxiliar :: BTree a -> [a]
+returnArrayAuxiliar Nil = []
 returnArrayAuxiliar (Leaf _ list) = list
 returnArrayAuxiliar (Node x list listBT) =   list ++ returnArray listBT
 
@@ -107,6 +82,7 @@ returnLength nodo = length (returnArray [nodo])
 
 -- mostrar la profundidad.
 profundidad :: BTree a -> Int
+profundidad Nil = 0
 profundidad (Leaf _ _) = 1
 profundidad (Node _ _ listBT) = 1 + profundidad(head listBT)
 
