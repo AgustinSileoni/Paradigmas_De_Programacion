@@ -1,37 +1,40 @@
 
-nodo = Node 2 [1] [Nil]
-nodoLleno = Node 2 [3] [nodo]
-nodos123 = Node 2 [2] [Leaf 2 [1], Leaf 2 [3]]
-arbol = create [1..15]
-lista = returnArray [arbol]
-arbolMedio = create [1..20]
-listaMedia = returnArray [arbolMedio]
-arbolGrande = create [1..100]
-listaGrande = returnArray [arbolGrande]
+-- nodo = Node 2 [1] [Nil 3]
+-- nodoLleno = Node 2 [3] [nodo]
+-- nodos123 = Node 2 [2] [Leaf 2 [1], Leaf 2 [3]]
+-- arbol = create [1..15]
+-- lista = returnArray [arbol]
+-- arbolMedio = create [1..20]
+-- listaMedia = returnArray [arbolMedio]
+-- arbolGrande = create [1..100]
+-- listaGrande = returnArray [arbolGrande]
 
-data BTree a = Nil  | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
+data BTree a = Nil Int | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
 
 
 -- crear desde un [a]
-create ::(Ord a,Eq a)=> [a] -> BTree a
-create [] = Nil
-create (x:xs) = if null xs 
-                then insert Nil x
-                else insert  (create xs) x
+create ::(Ord a,Eq a)=> [a] -> Int -> BTree a
+create [] a = Nil 3 
+create (x:xs) a= if null xs 
+                then insert (Nil 3) x
+                else insert  (create xs a) x
+
 
 -- buscar el maximo 
 buscarMax :: (Ord a, Eq a) => BTree a -> a
 buscarMax (Leaf _ list) = last list
 buscarMax (Node _ _ list) = buscarMax (last list)
 
+
 -- buscar el minimo
 buscarMin :: (Ord a, Eq a) => BTree a -> a
 buscarMin (Leaf _ list) = head list
 buscarMin (Node _ _ list) = buscarMin(head list)
 
+
 -- imprimir inoorder, preorder y postorder
 printPreordenAux :: BTree a -> [[a]]
-printPreordenAux Nil = []
+printPreordenAux (Nil _) = []
 printPreordenAux (Leaf _ a) = [a]
 printPreordenAux (Node _ list listBT) = list : printPreorden listBT
 
@@ -40,7 +43,7 @@ printPreorden [] = []
 printPreorden (x:xs) = printPreordenAux x ++ printPreorden xs
 
 printInordenAux :: BTree a -> [[a]]
-printInordenAux Nil = []
+printInordenAux (Nil _) = []
 printInordenAux (Leaf _ a)= [a] 
 printInordenAux (Node _ list listBT) =  printInordenAux (head listBT)  ++ list : printInorden (tail listBT) 
 
@@ -49,7 +52,7 @@ printInorden [] = []
 printInorden (x:xs) =   printInordenAux x ++  printInorden xs
 
 printPostOrdenAux :: BTree a -> [[a]]
-printPostOrdenAux Nil = []
+printPostOrdenAux (Nil _) = []
 printPostOrdenAux (Leaf _ a) = [a]
 printPostOrdenAux (Node _ list listBT) =  printPostorden listBT ++ [list] 
 
@@ -60,7 +63,7 @@ printPostorden (x:xs) =  printPostOrdenAux x ++ printPostorden xs
 
 -- devolver un array de [a].
 returnArrayAuxiliar :: BTree a -> [a]
-returnArrayAuxiliar Nil = []
+returnArrayAuxiliar (Nil _) = []
 returnArrayAuxiliar (Leaf _ list) = list
 returnArrayAuxiliar (Node x list listBT) =   list ++ returnArray listBT
 
@@ -80,9 +83,10 @@ quicksort (p:xs) = (quicksort lesser) ++ [p] ++ (quicksort greater)
 returnLength :: BTree a -> Int
 returnLength nodo = length (returnArray [nodo])
 
+
 -- mostrar la profundidad.
 profundidad :: BTree a -> Int
-profundidad Nil = 0
+profundidad (Nil _) = 0
 profundidad (Leaf _ _) = 1
 profundidad (Node _ _ listBT) = 1 + profundidad(head listBT)
 
@@ -94,7 +98,7 @@ insert t x = if isFull t then insertNonFull (split t) x
 
 
 insertNonFull :: (Ord a, Eq a) => BTree a -> a -> BTree a
-insertNonFull Nil x = Leaf 3 [x]
+insertNonFull (Nil a)x = Leaf a [x]
 insertNonFull (Leaf m []) x = Leaf m [x]
 insertNonFull l@(Leaf m keys@(k:ks)) x
    | x == k = l
@@ -129,7 +133,7 @@ lastHalf :: [a] -> [a]
 lastHalf xs = drop (div (length xs) 2) xs
 
 isFull :: (Ord a, Eq a) => BTree a -> Bool
-isFull Nil = False
+isFull (Nil 0) = False
 isFull (Leaf m ks)
   | length ks == (2 * m - 1) = True
   | otherwise = False
