@@ -1,22 +1,13 @@
 
--- nodo = Node 2 [1] [Nil 3]
--- nodoLleno = Node 2 [3] [nodo]
--- nodos123 = Node 2 [2] [Leaf 2 [1], Leaf 2 [3]]
--- arbol = create [1..15]
--- lista = returnArray [arbol]
--- arbolMedio = create [1..20]
--- listaMedia = returnArray [arbolMedio]
--- arbolGrande = create [1..100]
--- listaGrande = returnArray [arbolGrande]
 
-data BTree a = Nil Int | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
+data BTree a = Nil | Leaf Int [a] | Node Int [a] [BTree a] deriving (Show)
 
 
 -- crear desde un [a]
 create ::(Ord a,Eq a)=> [a] -> Int -> BTree a
-create [] a = Nil 3 
+create [] a = Nil  
 create (x:xs) a= if null xs 
-                then insert (Nil 3) x
+                then insert Nil  x
                 else insert  (create xs a) x
 
 
@@ -34,7 +25,7 @@ buscarMin (Node _ _ list) = buscarMin(head list)
 
 -- imprimir inoorder, preorder y postorder
 printPreordenAux :: BTree a -> [[a]]
-printPreordenAux (Nil _) = []
+printPreordenAux Nil  = []
 printPreordenAux (Leaf _ a) = [a]
 printPreordenAux (Node _ list listBT) = list : printPreorden listBT
 
@@ -43,7 +34,7 @@ printPreorden [] = []
 printPreorden (x:xs) = printPreordenAux x ++ printPreorden xs
 
 printInordenAux :: BTree a -> [[a]]
-printInordenAux (Nil _) = []
+printInordenAux Nil  = []
 printInordenAux (Leaf _ a)= [a] 
 printInordenAux (Node _ list listBT) =  printInordenAux (head listBT)  ++ list : printInorden (tail listBT) 
 
@@ -52,7 +43,7 @@ printInorden [] = []
 printInorden (x:xs) =   printInordenAux x ++  printInorden xs
 
 printPostOrdenAux :: BTree a -> [[a]]
-printPostOrdenAux (Nil _) = []
+printPostOrdenAux Nil  = []
 printPostOrdenAux (Leaf _ a) = [a]
 printPostOrdenAux (Node _ list listBT) =  printPostorden listBT ++ [list] 
 
@@ -63,7 +54,7 @@ printPostorden (x:xs) =  printPostOrdenAux x ++ printPostorden xs
 
 -- devolver un array de [a].
 returnArrayAuxiliar :: BTree a -> [a]
-returnArrayAuxiliar (Nil _) = []
+returnArrayAuxiliar Nil  = []
 returnArrayAuxiliar (Leaf _ list) = list
 returnArrayAuxiliar (Node x list listBT) =   list ++ returnArray listBT
 
@@ -96,9 +87,9 @@ insert :: (Ord a, Eq a) => BTree a -> a -> BTree a
 insert t x = if isFull t then insertNonFull (split t) x
                           else insertNonFull t x
 
-
+--Cuando cree un Leaf desde un Nil siempre va a tener 3 como limite
 insertNonFull :: (Ord a, Eq a) => BTree a -> a -> BTree a
-insertNonFull (Nil a)x = Leaf a [x]
+insertNonFull Nil x = Leaf 3 a [x]
 insertNonFull (Leaf m []) x = Leaf m [x]
 insertNonFull l@(Leaf m keys@(k:ks)) x
    | x == k = l
@@ -133,7 +124,7 @@ lastHalf :: [a] -> [a]
 lastHalf xs = drop (div (length xs) 2) xs
 
 isFull :: (Ord a, Eq a) => BTree a -> Bool
-isFull (Nil 0) = False
+isFull Nil = False
 isFull (Leaf m ks)
   | length ks == (2 * m - 1) = True
   | otherwise = False
